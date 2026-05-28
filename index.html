@@ -1,1233 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Geomatik AI — Intelligent Geological Solutions</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --navy: #0a0f1e;
-    --navy-mid: #111827;
-    --navy-light: #1a2540;
-    --slate: #1e2d4a;
-    --blue: #2D5BA0;
-    --blue-bright: #4A90E2;
-    --blue-glow: #6fb3f7;
-    --cream: #f0ebe0;
-    --cream-dim: #c8c0b0;
-    --accent: #e8a048;
-    --accent-dim: #b07830;
-    --white: #ffffff;
-    --text-muted: #8a9bbf;
-  }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--navy);
-    color: var(--cream);
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 300;
-    line-height: 1.7;
-    overflow-x: hidden;
-  }
-
-  /* TOPO PATTERN */
-  .topo-bg {
-    background-image:
-      radial-gradient(ellipse at 20% 50%, rgba(45,91,160,0.15) 0%, transparent 60%),
-      radial-gradient(ellipse at 80% 20%, rgba(74,144,226,0.08) 0%, transparent 50%),
-      url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M60,10 Q80,20 100,40 Q110,60 100,80 Q80,100 60,110 Q40,100 20,80 Q10,60 20,40 Q40,20 60,10Z' fill='none' stroke='%232D5BA0' stroke-width='0.4' opacity='0.2'/%3E%3Cpath d='M60,25 Q75,33 88,48 Q95,62 88,75 Q74,89 60,95 Q46,89 32,75 Q25,62 32,48 Q45,33 60,25Z' fill='none' stroke='%234A90E2' stroke-width='0.3' opacity='0.15'/%3E%3Cpath d='M60,40 Q70,46 78,56 Q82,62 78,70 Q70,79 60,82 Q50,79 42,70 Q38,62 42,56 Q50,46 60,40Z' fill='none' stroke='%236fb3f7' stroke-width='0.3' opacity='0.12'/%3E%3C/svg%3E");
-    background-size: auto, auto, 120px 120px;
-  }
-
-  /* NAV */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    background: rgba(10,15,30,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(74,144,226,0.15);
-    padding: 0 2rem;
-    height: 70px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .nav-logo {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .nav-links {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    list-style: none;
-  }
-
-  .nav-links a {
-    text-decoration: none;
-    color: var(--cream-dim);
-    font-size: 0.85rem;
-    font-weight: 400;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    transition: color 0.2s;
-  }
-
-  .nav-links a:hover { color: var(--blue-glow); }
-
-  .nav-cta {
-    background: var(--blue) !important;
-    color: var(--white) !important;
-    padding: 0.5rem 1.25rem !important;
-    border-radius: 4px;
-    transition: background 0.2s !important;
-  }
-
-  .nav-cta:hover { background: var(--blue-bright) !important; }
-
-  .nav-hamburger { display: none; cursor: pointer; }
-
-  /* HERO */
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    padding: 120px 2rem 80px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(45,91,160,0.2) 0%, transparent 50%, rgba(232,160,72,0.05) 100%);
-  }
-
-  .hero-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: center;
-    position: relative;
-    z-index: 1;
-  }
-
-  .hero-label {
-    display: inline-block;
-    font-size: 0.75rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--accent);
-    border: 1px solid rgba(232,160,72,0.3);
-    padding: 0.3rem 0.9rem;
-    border-radius: 2px;
-    margin-bottom: 1.5rem;
-  }
-
-  .hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    font-weight: 900;
-    line-height: 1.1;
-    color: var(--white);
-    margin-bottom: 1.5rem;
-  }
-
-  .hero h1 em {
-    font-style: normal;
-    color: var(--blue-glow);
-  }
-
-  .hero p {
-    font-size: 1.1rem;
-    color: var(--cream-dim);
-    margin-bottom: 2.5rem;
-    max-width: 480px;
-  }
-
-  .hero-btns {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-
-  .btn-primary {
-    background: var(--blue);
-    color: var(--white);
-    padding: 0.9rem 2rem;
-    border-radius: 4px;
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 0.9rem;
-    letter-spacing: 0.05em;
-    transition: background 0.2s, transform 0.2s;
-    display: inline-block;
-  }
-
-  .btn-primary:hover { background: var(--blue-bright); transform: translateY(-2px); }
-
-  .btn-outline {
-    border: 1px solid rgba(111,179,247,0.4);
-    color: var(--blue-glow);
-    padding: 0.9rem 2rem;
-    border-radius: 4px;
-    text-decoration: none;
-    font-weight: 400;
-    font-size: 0.9rem;
-    letter-spacing: 0.05em;
-    transition: border-color 0.2s, background 0.2s, transform 0.2s;
-    display: inline-block;
-  }
-
-  .btn-outline:hover { border-color: var(--blue-glow); background: rgba(111,179,247,0.08); transform: translateY(-2px); }
-
-  /* HERO VISUAL */
-  .hero-visual {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .hero-globe {
-    width: 420px;
-    height: 420px;
-    position: relative;
-  }
-
-  /* STATS STRIP */
-  .stats-strip {
-    background: var(--navy-mid);
-    border-top: 1px solid rgba(74,144,226,0.12);
-    border-bottom: 1px solid rgba(74,144,226,0.12);
-    padding: 3rem 2rem;
-  }
-
-  .stats-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2rem;
-    text-align: center;
-  }
-
-  .stat-num {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.8rem;
-    font-weight: 700;
-    color: var(--blue-glow);
-    display: block;
-    line-height: 1;
-    margin-bottom: 0.4rem;
-  }
-
-  .stat-label {
-    font-size: 0.8rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-  }
-
-  /* SECTION COMMONS */
-  section { padding: 6rem 2rem; }
-
-  .section-inner { max-width: 1200px; margin: 0 auto; }
-
-  .section-tag {
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 1rem;
-    display: block;
-  }
-
-  .section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(1.8rem, 3vw, 2.8rem);
-    font-weight: 700;
-    color: var(--white);
-    line-height: 1.2;
-    margin-bottom: 1.5rem;
-  }
-
-  .section-sub {
-    font-size: 1rem;
-    color: var(--text-muted);
-    max-width: 560px;
-    margin-bottom: 3.5rem;
-  }
-
-  /* SERVICES */
-  .services { background: var(--navy); }
-
-  .services-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-  }
-
-  .service-card {
-    background: var(--navy-light);
-    border: 1px solid rgba(74,144,226,0.15);
-    border-radius: 8px;
-    padding: 2rem;
-    transition: border-color 0.3s, transform 0.3s;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .service-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--blue), var(--blue-bright));
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-
-  .service-card:hover { border-color: rgba(74,144,226,0.4); transform: translateY(-4px); }
-  .service-card:hover::before { opacity: 1; }
-
-  .service-icon {
-    width: 48px;
-    height: 48px;
-    background: rgba(45,91,160,0.25);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 1.25rem;
-  }
-
-  .service-card h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--white);
-    margin-bottom: 0.75rem;
-  }
-
-  .service-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; }
-
-  .service-card .learn-more {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin-top: 1.25rem;
-    font-size: 0.8rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--blue-glow);
-    text-decoration: none;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-
-  .service-card:hover .learn-more { opacity: 1; }
-
-  /* HOW IT WORKS */
-  .process { background: var(--navy-mid); }
-
-  .process-steps {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0;
-    position: relative;
-  }
-
-  .process-steps::before {
-    content: '';
-    position: absolute;
-    top: 32px; left: 10%; right: 10%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--blue), var(--blue-bright), var(--blue), transparent);
-    opacity: 0.3;
-  }
-
-  .process-step {
-    padding: 0 1.5rem;
-    text-align: center;
-  }
-
-  .step-num {
-    width: 64px;
-    height: 64px;
-    background: var(--navy-light);
-    border: 1px solid rgba(74,144,226,0.3);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1.5rem;
-    font-family: 'Playfair Display', serif;
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--blue-glow);
-    position: relative;
-    z-index: 1;
-  }
-
-  .process-step h4 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--white);
-    margin-bottom: 0.6rem;
-  }
-
-  .process-step p { font-size: 0.85rem; color: var(--text-muted); }
-
-  /* EXPERTISE */
-  .expertise { background: var(--navy); }
-
-  .expertise-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 5rem;
-    align-items: center;
-  }
-
-  .expertise-cards {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-  }
-
-  .exp-card {
-    background: var(--navy-light);
-    border: 1px solid rgba(74,144,226,0.12);
-    border-radius: 8px;
-    padding: 1.5rem;
-  }
-
-  .exp-card.wide { grid-column: span 2; }
-
-  .exp-card-icon {
-    font-size: 1.5rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .exp-card h4 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--white);
-    margin-bottom: 0.4rem;
-  }
-
-  .exp-card p { font-size: 0.85rem; color: var(--text-muted); }
-
-  /* ABOUT */
-  .about { background: var(--slate); }
-
-  .about-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 5rem;
-    align-items: center;
-  }
-
-  .about-visual {
-    position: relative;
-  }
-
-  .about-quote {
-    background: var(--navy-light);
-    border-left: 3px solid var(--accent);
-    padding: 2rem 2rem 2rem 2.5rem;
-    border-radius: 4px;
-    font-family: 'Playfair Display', serif;
-    font-size: 1.15rem;
-    font-style: italic;
-    color: var(--cream-dim);
-    line-height: 1.6;
-    margin-bottom: 1.5rem;
-  }
-
-  .about-meta {
-    display: flex;
-    gap: 2rem;
-  }
-
-  .meta-item { text-align: center; }
-
-  .meta-num {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--blue-glow);
-    display: block;
-  }
-
-  .meta-label { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; }
-
-  .about-text p { color: var(--cream-dim); font-size: 0.95rem; margin-bottom: 1.25rem; }
-
-  .values-list {
-    list-style: none;
-    margin-top: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .values-list li {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    font-size: 0.9rem;
-    color: var(--cream-dim);
-  }
-
-  .values-list li span.dot {
-    width: 6px;
-    height: 6px;
-    background: var(--accent);
-    border-radius: 50%;
-    flex-shrink: 0;
-    margin-top: 0.55rem;
-  }
-
-  /* INDUSTRIES */
-  .industries { background: var(--navy-mid); }
-
-  .industries-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-  }
-
-  .industry-card {
-    background: var(--navy-light);
-    border: 1px solid rgba(74,144,226,0.12);
-    border-radius: 8px;
-    padding: 1.75rem;
-    transition: border-color 0.2s;
-  }
-
-  .industry-card:hover { border-color: rgba(74,144,226,0.35); }
-
-  .industry-icon {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-  }
-
-  .industry-card h4 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--white);
-    margin-bottom: 0.5rem;
-  }
-
-  .industry-card p { font-size: 0.85rem; color: var(--text-muted); }
-
-  /* CONTACT */
-  .contact { background: var(--navy); }
-
-  .contact-layout {
-    display: grid;
-    grid-template-columns: 1fr 1.4fr;
-    gap: 5rem;
-    align-items: start;
-  }
-
-  .contact-info h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: var(--white);
-    margin-bottom: 1rem;
-  }
-
-  .contact-info p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; }
-
-  .contact-detail {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem 1.25rem;
-    background: var(--navy-light);
-    border: 1px solid rgba(74,144,226,0.12);
-    border-radius: 6px;
-    margin-bottom: 0.75rem;
-  }
-
-  .contact-detail-icon {
-    width: 36px;
-    height: 36px;
-    background: rgba(45,91,160,0.3);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-
-  .contact-detail-text { font-size: 0.85rem; }
-  .contact-detail-text span { display: block; color: var(--text-muted); font-size: 0.75rem; margin-bottom: 0.1rem; }
-  .contact-detail-text strong { color: var(--cream); font-weight: 400; }
-
-  /* FORM */
-  .contact-form { display: flex; flex-direction: column; gap: 1.25rem; }
-
-  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
-
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
-
-  label {
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-  }
-
-  input, textarea, select {
-    background: var(--navy-light);
-    border: 1px solid rgba(74,144,226,0.2);
-    border-radius: 4px;
-    padding: 0.75rem 1rem;
-    color: var(--cream);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.9rem;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-
-  input:focus, textarea:focus, select:focus {
-    border-color: var(--blue-bright);
-  }
-
-  input::placeholder, textarea::placeholder { color: var(--text-muted); }
-
-  textarea { resize: vertical; min-height: 120px; }
-
-  select option { background: var(--navy-mid); }
-
-  .form-submit {
-    background: var(--blue);
-    color: var(--white);
-    border: none;
-    padding: 1rem 2rem;
-    border-radius: 4px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.2s;
-    text-align: center;
-  }
-
-  .form-submit:hover { background: var(--blue-bright); transform: translateY(-2px); }
-
-  /* FOOTER */
-  footer {
-    background: var(--navy-mid);
-    border-top: 1px solid rgba(74,144,226,0.12);
-    padding: 4rem 2rem 2rem;
-  }
-
-  .footer-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .footer-top {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    gap: 3rem;
-    padding-bottom: 3rem;
-    border-bottom: 1px solid rgba(74,144,226,0.1);
-    margin-bottom: 2rem;
-  }
-
-  .footer-brand p {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    margin-top: 1rem;
-    max-width: 280px;
-    line-height: 1.7;
-  }
-
-  .footer-col h5 {
-    font-size: 0.75rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--cream-dim);
-    margin-bottom: 1.25rem;
-    font-weight: 500;
-  }
-
-  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
-
-  .footer-col a {
-    color: var(--text-muted);
-    text-decoration: none;
-    font-size: 0.85rem;
-    transition: color 0.2s;
-  }
-
-  .footer-col a:hover { color: var(--blue-glow); }
-
-  .footer-bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-  }
-
-  /* RESPONSIVE */
-  @media (max-width: 900px) {
-    .hero-inner { grid-template-columns: 1fr; }
-    .hero-visual { display: none; }
-    .stats-inner { grid-template-columns: repeat(2, 1fr); }
-    .services-grid { grid-template-columns: 1fr; }
-    .process-steps { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
-    .process-steps::before { display: none; }
-    .expertise-layout { grid-template-columns: 1fr; gap: 2.5rem; }
-    .about-layout { grid-template-columns: 1fr; gap: 2.5rem; }
-    .industries-grid { grid-template-columns: 1fr 1fr; }
-    .contact-layout { grid-template-columns: 1fr; gap: 2.5rem; }
-    .footer-top { grid-template-columns: 1fr 1fr; gap: 2rem; }
-    .nav-links { display: none; }
-    .nav-hamburger { display: block; }
-    .form-row { grid-template-columns: 1fr; }
-  }
-
-  @media (max-width: 560px) {
-    .stats-inner { grid-template-columns: 1fr 1fr; }
-    .industries-grid { grid-template-columns: 1fr; }
-    .footer-top { grid-template-columns: 1fr; }
-    .footer-bottom { flex-direction: column; gap: 0.5rem; text-align: center; }
-    .expertise-cards { grid-template-columns: 1fr; }
-    .exp-card.wide { grid-column: span 1; }
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geomatik AI - Intelligent Geological Solutions</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        .hex-pattern {
+            background-color: 
+#f8fafc;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15,30 L30,15 L45,30 L45,45 L30,60 L15,45 Z' fill='none' stroke='%23e2e8f0' stroke-width='1'/%3E%3C/svg%3E");
+            background-size: 60px 60px;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, 
+#2D5BA0 0%, 
+#4A90E2 100%);
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            transition: transform 0.3s ease;
+        }
+    </style>
 </head>
-<body class="topo-bg">
-
-<!-- NAV -->
-<nav>
-  <div class="nav-logo">
-    <svg width="160" height="50" viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg">
-      <path d="M40,130 L90,70 L140,110 L190,50 L240,130" fill="none" stroke="#4A90E2" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/>
-      <path d="M60,130 L60,110 L80,110 M160,110 L160,90 L180,90" stroke="#6fb3f7" stroke-width="3" fill="none" stroke-linecap="round"/>
-      <circle cx="90" cy="70" r="4" fill="#4A90E2"/>
-      <circle cx="190" cy="50" r="4" fill="#6fb3f7"/>
-      <text x="280" y="105" font-family="Playfair Display, serif" font-weight="700" font-size="26" fill="#ffffff">GEOMATIK</text>
-      <text x="280" y="128" font-family="DM Sans, sans-serif" font-weight="300" font-size="14" letter-spacing="6" fill="#4A90E2">AI</text>
-    </svg>
-  </div>
-  <ul class="nav-links">
-    <li><a href="#services">Services</a></li>
-    <li><a href="#process">Process</a></li>
-    <li><a href="#expertise">Expertise</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#industries">Industries</a></li>
-    <li><a href="#contact" class="nav-cta">Contact Us</a></li>
-  </ul>
-  <div class="nav-hamburger">
-    <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24">
-      <path d="M4 6h16M4 12h16M4 18h16"/>
-    </svg>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section class="hero" id="home">
-  <div class="hero-inner">
-    <div class="hero-content">
-      <div class="hero-label">Geological Intelligence Platform</div>
-      <h1>Revolutionizing<br>Geology Through<br><em>Artificial Intelligence</em></h1>
-      <p>Harnessing machine learning and advanced data science to deliver safer infrastructure, precise geological mapping, and resilient communities — built for the challenges of tomorrow.</p>
-      <div class="hero-btns">
-        <a href="#services" class="btn-primary">Explore Services</a>
-        <a href="#contact" class="btn-outline">Talk to an Expert</a>
-      </div>
-    </div>
-    <div class="hero-visual">
-      <svg class="hero-globe" viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <radialGradient id="globeGrad" cx="40%" cy="35%">
-            <stop offset="0%" stop-color="#1a2f5e"/>
-            <stop offset="100%" stop-color="#0a0f1e"/>
-          </radialGradient>
-        </defs>
-        <!-- Globe base -->
-        <circle cx="210" cy="210" r="180" fill="url(#globeGrad)" stroke="#2D5BA0" stroke-width="1" opacity="0.6"/>
-        <!-- Topo rings -->
-        <ellipse cx="210" cy="210" rx="180" ry="50" fill="none" stroke="#4A90E2" stroke-width="0.6" opacity="0.3"/>
-        <ellipse cx="210" cy="210" rx="155" ry="35" fill="none" stroke="#4A90E2" stroke-width="0.5" opacity="0.25"/>
-        <ellipse cx="210" cy="210" rx="120" ry="22" fill="none" stroke="#6fb3f7" stroke-width="0.5" opacity="0.2"/>
-        <ellipse cx="210" cy="210" rx="80" ry="12" fill="none" stroke="#6fb3f7" stroke-width="0.4" opacity="0.15"/>
-        <!-- Meridians -->
-        <ellipse cx="210" cy="210" rx="60" ry="180" fill="none" stroke="#2D5BA0" stroke-width="0.5" opacity="0.3"/>
-        <ellipse cx="210" cy="210" rx="130" ry="180" fill="none" stroke="#2D5BA0" stroke-width="0.5" opacity="0.25"/>
-        <!-- Equator -->
-        <line x1="30" y1="210" x2="390" y2="210" stroke="#4A90E2" stroke-width="0.5" opacity="0.25"/>
-        <!-- Terrain lines -->
-        <path d="M80,190 Q120,160 170,175 Q210,185 250,165 Q290,148 340,170" fill="none" stroke="#4A90E2" stroke-width="1.5" opacity="0.5"/>
-        <path d="M90,220 Q130,195 175,208 Q215,218 260,200 Q300,185 345,205" fill="none" stroke="#4A90E2" stroke-width="1" opacity="0.4"/>
-        <path d="M100,240 Q140,225 185,235 Q225,244 270,228 Q308,215 348,232" fill="none" stroke="#6fb3f7" stroke-width="0.8" opacity="0.35"/>
-        <!-- Data points -->
-        <circle cx="170" cy="175" r="4" fill="#e8a048" opacity="0.9"/>
-        <circle cx="250" cy="165" r="5" fill="#4A90E2" opacity="0.9"/>
-        <circle cx="130" cy="220" r="3" fill="#6fb3f7" opacity="0.8"/>
-        <circle cx="300" cy="195" r="4" fill="#e8a048" opacity="0.7"/>
-        <!-- Pulse rings -->
-        <circle cx="250" cy="165" r="12" fill="none" stroke="#4A90E2" stroke-width="1" opacity="0.4"/>
-        <circle cx="250" cy="165" r="22" fill="none" stroke="#4A90E2" stroke-width="0.5" opacity="0.2"/>
-        <circle cx="170" cy="175" r="10" fill="none" stroke="#e8a048" stroke-width="1" opacity="0.35"/>
-        <!-- Grid overlay -->
-        <circle cx="210" cy="210" r="180" fill="none" stroke="#2D5BA0" stroke-width="1.5" opacity="0.5"/>
-        <!-- Glow cap -->
-        <ellipse cx="165" cy="140" rx="55" ry="28" fill="#4A90E2" opacity="0.04"/>
-      </svg>
-    </div>
-  </div>
-</section>
-
-<!-- STATS STRIP -->
-<div class="stats-strip">
-  <div class="stats-inner">
-    <div>
-      <span class="stat-num">50+</span>
-      <span class="stat-label">Projects Delivered</span>
-    </div>
-    <div>
-      <span class="stat-num">3</span>
-      <span class="stat-label">Core Disciplines</span>
-    </div>
-    <div>
-      <span class="stat-num">AI</span>
-      <span class="stat-label">Powered Platform</span>
-    </div>
-    <div>
-      <span class="stat-num">24/7</span>
-      <span class="stat-label">Early Warning Systems</span>
-    </div>
-  </div>
-</div>
-
-<!-- SERVICES -->
-<section class="services" id="services">
-  <div class="section-inner">
-    <span class="section-tag">What We Do</span>
-    <h2 class="section-title">Comprehensive AI-Powered<br>Geological Solutions</h2>
-    <p class="section-sub">From subsurface analysis to real-time disaster response, our intelligent platform delivers insights that protect lives and infrastructure.</p>
-    <div class="services-grid">
-
-      <div class="service-card">
-        <div class="service-icon">
-          <svg width="24" height="24" fill="none" stroke="#4A90E2" stroke-width="1.8" viewBox="0 0 24 24">
-            <path d="M3 17l4-8 4 4 3-6 4 6M3 21h18"/>
-          </svg>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <svg class="h-16 w-auto" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Logo SVG code from previous artifact -->
+                        <path d="M100,140 L150,80 L200,120 L250,60 L300,140" fill="none" stroke="
+#2D5BA0" stroke-width="8"/>
+                        <path d="M120,140 L120,120 L140,120 M220,120 L220,100 L240,100" stroke="
+#4A90E2" stroke-width="3" fill="none"/>
+                        <text x="200" y="170" font-family="Arial, sans-serif" font-weight="bold" font-size="24" text-anchor="middle" fill="
+#333333">GEOMATIK AI</text>
+                    </svg>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#home" class="text-gray-700 hover:text-blue-600 px-3 py-2">Home</a>
+                        <a href="#services" class="text-gray-700 hover:text-blue-600 px-3 py-2">Services</a>
+                        <a href="#expertise" class="text-gray-700 hover:text-blue-600 px-3 py-2">Expertise</a>
+                        <a href="#about" class="text-gray-700 hover:text-blue-600 px-3 py-2">About</a>
+                        <a href="#contact" class="bg-blue-600 text-white px-4 py-2 rounded-md">Contact Us</a>
+                    </div>
+                </div>
+            </div>
         </div>
-        <h3>Geological Mapping</h3>
-        <p>Machine learning models trained on multi-source geospatial datasets deliver high-resolution subsurface mapping, fault detection, and stratigraphy analysis far beyond traditional methods.</p>
-        <a href="#contact" class="learn-more">Learn more →</a>
-      </div>
-
-      <div class="service-card">
-        <div class="service-icon">
-          <svg width="24" height="24" fill="none" stroke="#4A90E2" stroke-width="1.8" viewBox="0 0 24 24">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-          </svg>
+    </nav>
+    <!-- Hero Section -->
+    <section id="home" class="hex-pattern pt-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div class="text-center">
+                <h1 class="text-4xl font-bold text-gray-900 sm:text-5xl md:text-6xl">
+                    <span class="block">Revolutionizing Geology</span>
+                    <span class="block text-blue-600">Through Artificial Intelligence</span>
+                </h1>
+                <p class="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+                    Harnessing the power of AI to create safer, more resilient, and sustainable infrastructure and communities.
+                </p>
+                <div class="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
+                    <div class="rounded-md shadow">
+                        <a href="#services" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10">
+                            Our Services
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
-        <h3>Risk Assessment</h3>
-        <p>AI-driven probabilistic risk models evaluate geological hazards including landslides, subsidence, and seismic events — enabling proactive, data-backed decision-making at every stage.</p>
-        <a href="#contact" class="learn-more">Learn more →</a>
-      </div>
-
-      <div class="service-card">
-        <div class="service-icon">
-          <svg width="24" height="24" fill="none" stroke="#4A90E2" stroke-width="1.8" viewBox="0 0 24 24">
-            <rect x="3" y="3" width="18" height="18" rx="2"/>
-            <path d="M9 9h6v6H9z"/>
-          </svg>
+    </section>
+    <!-- Services Section -->
+    <section id="services" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold text-gray-900">Our Services</h2>
+                <p class="mt-4 text-gray-500">Comprehensive AI-powered solutions for geological and infrastructure challenges</p>
+            </div>
+            <div class="mt-12 grid gap-8 md:grid-cols-3">
+                <!-- Service Card 1 -->
+                <div class="service-card bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-all">
+                    <div class="h-12 w-12 rounded-md bg-blue-100 flex items-center justify-center mb-4">
+                        <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Geological Support</h3>
+                    <p class="text-gray-600">Machine learning-based geological mapping and risk assessment for informed decision-making.</p>
+                </div>
+                <!-- Service Card 2 -->
+                <div class="service-card bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-all">
+                    <div class="h-12 w-12 rounded-md bg-blue-100 flex items-center justify-center mb-4">
+                        <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Infrastructure Design</h3>
+                    <p class="text-gray-600">AI-enhanced design tools for resilient and sustainable infrastructure development.</p>
+                </div>
+                <!-- Service Card 3 -->
+                <div class="service-card bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-all">
+                    <div class="h-12 w-12 rounded-md bg-blue-100 flex items-center justify-center mb-4">
+                        <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Disaster Management</h3>
+                    <p class="text-gray-600">AI-powered early warning systems and comprehensive disaster risk assessment.</p>
+                </div>
+            </div>
         </div>
-        <h3>Infrastructure Design</h3>
-        <p>AI-enhanced tools support engineers with site-specific foundation recommendations, slope stability analysis, and resilient design parameters adapted to real geological conditions.</p>
-        <a href="#contact" class="learn-more">Learn more →</a>
-      </div>
-
-      <div class="service-card">
-        <div class="service-icon">
-          <svg width="24" height="24" fill="none" stroke="#4A90E2" stroke-width="1.8" viewBox="0 0 24 24">
-            <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
-          </svg>
+    </section>
+    <!-- Expertise Section -->
+    <section id="expertise" class="py-20 gradient-bg text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold">Our Expertise</h2>
+                <p class="mt-4">A multidisciplinary team of experts delivering comprehensive solutions</p>
+            </div>
+            <div class="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                <div class="bg-white bg-opacity-10 rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-2">Civil Engineering</h3>
+                    <p>Experts in structural analysis and infrastructure design</p>
+                </div>
+                <div class="bg-white bg-opacity-10 rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-2">Geology</h3>
+                    <p>Specialists in earth sciences and subsurface analysis</p>
+                </div>
+                <div class="bg-white bg-opacity-10 rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-2">Data Science</h3>
+                    <p>Innovators in AI and machine learning solutions</p>
+                </div>
+            </div>
         </div>
-        <h3>Disaster Management</h3>
-        <p>Real-time monitoring networks combined with predictive AI models deliver early warning systems for floods, earthquakes, and mass movements — protecting communities before disaster strikes.</p>
-        <a href="#contact" class="learn-more">Learn more →</a>
-      </div>
-
-      <div class="service-card">
-        <div class="service-icon">
-          <svg width="24" height="24" fill="none" stroke="#4A90E2" stroke-width="1.8" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20"/>
-          </svg>
+    </section>
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold text-gray-900">Contact Us</h2>
+                <p class="mt-4 text-gray-500">Get in touch to learn how we can help with your project</p>
+            </div>
+            <div class="mt-12 max-w-lg mx-auto">
+                <form class="grid grid-cols-1 gap-6">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                        <input type="text" id="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label for="message" class="block text-sm font-medium text-gray-700">Message</label>
+                        <textarea id="message" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+                    </div>
+                    <div>
+                        <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Send Message
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <h3>Remote Sensing & GIS</h3>
-        <p>Satellite imagery analysis, LiDAR point-cloud processing, and advanced GIS integration create multi-layered spatial intelligence products tailored to your project scope.</p>
-        <a href="#contact" class="learn-more">Learn more →</a>
-      </div>
-
-      <div class="service-card">
-        <div class="service-icon">
-          <svg width="24" height="24" fill="none" stroke="#4A90E2" stroke-width="1.8" viewBox="0 0 24 24">
-            <path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2v-4M9 21H5a2 2 0 01-2-2v-4m0 0h18"/>
-          </svg>
+    </section>
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Geomatik AI</h3>
+                    <p class="text-gray-400">Revolutionizing geological and infrastructure solutions through artificial intelligence.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="text-gray-400 hover:text-white">Home</a></li>
+                        <li><a href="#services" class="text-gray-400 hover:text-white">Services</a></li>
+                        <li><a href="#expertise" class="text-gray-400 hover:text-white">Expertise</a></li>
+                        <li><a href="#about" class="text-gray-400 hover:text-white">About</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact</h3>
+                    <p class="text-gray-400">Email: aigeomatik@gmail.com</p>
+                    <p class="text-gray-400"></p>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
+                <p>&copy; 2025 Geomatik AI. All rights reserved.</p>
+            </div>
         </div>
-        <h3>Environmental Monitoring</h3>
-        <p>Continuous land-use and land-cover change detection, deforestation alerts, and erosion tracking — powered by AI models that improve with each data cycle.</p>
-        <a href="#contact" class="learn-more">Learn more →</a>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- PROCESS -->
-<section class="process" id="process">
-  <div class="section-inner">
-    <span class="section-tag">How We Work</span>
-    <h2 class="section-title" style="margin-bottom: 3rem;">From Data to Decision</h2>
-    <div class="process-steps">
-      <div class="process-step">
-        <div class="step-num">01</div>
-        <h4>Data Acquisition</h4>
-        <p>We integrate multi-source geospatial data: satellite, LiDAR, borehole logs, and sensor networks into a unified platform.</p>
-      </div>
-      <div class="process-step">
-        <div class="step-num">02</div>
-        <h4>AI Processing</h4>
-        <p>Custom machine learning pipelines clean, classify, and extract meaningful geological features from complex, heterogeneous datasets.</p>
-      </div>
-      <div class="process-step">
-        <div class="step-num">03</div>
-        <h4>Risk Modeling</h4>
-        <p>Probabilistic models quantify hazard exposure and uncertainty, generating spatial risk maps validated against historical events.</p>
-      </div>
-      <div class="process-step">
-        <div class="step-num">04</div>
-        <h4>Delivery & Action</h4>
-        <p>Insights are delivered as interactive reports, GIS layers, API feeds, or early warning alerts — ready for immediate use by your team.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- EXPERTISE -->
-<section class="expertise" id="expertise">
-  <div class="section-inner">
-    <div class="expertise-layout">
-      <div>
-        <span class="section-tag">Our Team</span>
-        <h2 class="section-title">A Multidisciplinary Team of Experts</h2>
-        <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.8; margin-bottom: 1.5rem;">
-          Geomatik AI brings together specialists from civil engineering, earth sciences, and data science into a single cohesive team. This rare combination means our AI solutions are grounded in real geological understanding — not just algorithms.
-        </p>
-        <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.8;">
-          Every model we build is informed by domain expertise. Every recommendation we deliver is peer-reviewed by scientists with decades of field experience.
-        </p>
-      </div>
-      <div class="expertise-cards">
-        <div class="exp-card">
-          <div class="exp-card-icon">🏗️</div>
-          <h4>Civil Engineering</h4>
-          <p>Structural analysis, slope stability, and resilient infrastructure design grounded in geotechnical principles.</p>
-        </div>
-        <div class="exp-card">
-          <div class="exp-card-icon">🌍</div>
-          <h4>Geology</h4>
-          <p>Earth science specialists in stratigraphy, geomorphology, hydrogeology, and seismic hazard analysis.</p>
-        </div>
-        <div class="exp-card">
-          <div class="exp-card-icon">🤖</div>
-          <h4>Data Science</h4>
-          <p>ML engineers building custom models for spatial classification, anomaly detection, and predictive analytics.</p>
-        </div>
-        <div class="exp-card">
-          <div class="exp-card-icon">🛰️</div>
-          <h4>Remote Sensing</h4>
-          <p>Satellite and aerial image analysts skilled in change detection, object segmentation, and spectral analysis.</p>
-        </div>
-        <div class="exp-card wide">
-          <div class="exp-card-icon">📊</div>
-          <h4>GIS & Spatial Analytics</h4>
-          <p>Geospatial analysts specializing in multi-layered spatial intelligence, cartographic design, and interoperable data delivery across platforms and stakeholders.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ABOUT -->
-<section class="about" id="about">
-  <div class="section-inner">
-    <div class="about-layout">
-      <div class="about-visual">
-        <div class="about-quote">
-          "We believe that the most critical infrastructure decisions deserve the most intelligent analytical tools — and that AI, guided by genuine geological expertise, can deliver exactly that."
-        </div>
-        <div class="about-meta">
-          <div class="meta-item">
-            <span class="meta-num">2025</span>
-            <span class="meta-label">Founded</span>
-          </div>
-          <div class="meta-item">
-            <span class="meta-num">3</span>
-            <span class="meta-label">Core Domains</span>
-          </div>
-          <div class="meta-item">
-            <span class="meta-num">AI</span>
-            <span class="meta-label">First Approach</span>
-          </div>
-        </div>
-      </div>
-      <div class="about-text">
-        <span class="section-tag">About Geomatik AI</span>
-        <h2 class="section-title">Building a Safer World with Smarter Science</h2>
-        <p>Geomatik AI was founded on a simple but powerful conviction: that the intersection of artificial intelligence and geoscience can fundamentally improve how we understand and interact with the ground beneath us.</p>
-        <p>Our team combines deep domain expertise in earth sciences with cutting-edge machine learning — enabling us to tackle geological challenges that were previously too complex, too costly, or too slow to address effectively.</p>
-        <p>We work with infrastructure developers, government agencies, environmental consultancies, and disaster management authorities to deliver intelligence that matters.</p>
-        <ul class="values-list">
-          <li><span class="dot"></span>Scientific rigor underpins every AI model we build</li>
-          <li><span class="dot"></span>Transparency in methodology and uncertainty quantification</li>
-          <li><span class="dot"></span>Practical, actionable outputs — not just academic insight</li>
-          <li><span class="dot"></span>Long-term partnerships built on measurable outcomes</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- INDUSTRIES -->
-<section class="industries" id="industries">
-  <div class="section-inner">
-    <span class="section-tag">Sectors We Serve</span>
-    <h2 class="section-title">Industries We Work With</h2>
-    <p class="section-sub">Our AI geological platform serves a broad range of sectors where subsurface intelligence is mission-critical.</p>
-    <div class="industries-grid">
-      <div class="industry-card">
-        <div class="industry-icon">🛤️</div>
-        <h4>Transport & Infrastructure</h4>
-        <p>Geological site assessments, embankment stability analysis, and AI-guided route feasibility for roads, rail, and bridges.</p>
-      </div>
-      <div class="industry-card">
-        <div class="industry-icon">🏙️</div>
-        <h4>Urban Development</h4>
-        <p>Subsidence risk mapping, groundwater analysis, and foundation suitability for urban planning and high-density construction.</p>
-      </div>
-      <div class="industry-card">
-        <div class="industry-icon">⚡</div>
-        <h4>Energy</h4>
-        <p>Site selection, geological risk profiling, and environmental monitoring for renewable and conventional energy projects.</p>
-      </div>
-      <div class="industry-card">
-        <div class="industry-icon">🌊</div>
-        <h4>Water Resources</h4>
-        <p>Hydrogeological mapping, aquifer characterization, and flood risk modeling to support sustainable water management.</p>
-      </div>
-      <div class="industry-card">
-        <div class="industry-icon">🚨</div>
-        <h4>Disaster Risk & Response</h4>
-        <p>Government and NGO partnerships for early warning infrastructure, post-event damage assessment, and community resilience planning.</p>
-      </div>
-      <div class="industry-card">
-        <div class="industry-icon">🌿</div>
-        <h4>Environmental Consultancy</h4>
-        <p>Land degradation tracking, contamination spread modeling, and ecosystem change detection for environmental impact assessment.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section class="contact" id="contact">
-  <div class="section-inner">
-    <div class="contact-layout">
-      <div class="contact-info">
-        <span class="section-tag">Get in Touch</span>
-        <h3>Let's Discuss Your Project</h3>
-        <p>Whether you're in early scoping or ready to deploy, our team is ready to explore how AI geological intelligence can serve your goals.</p>
-        <div class="contact-detail">
-          <div class="contact-detail-icon">
-            <svg width="16" height="16" fill="none" stroke="#4A90E2" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-              <polyline points="22,6 12,13 2,6"/>
-            </svg>
-          </div>
-          <div class="contact-detail-text">
-            <span>Email</span>
-            <strong>aigeomatik@gmail.com</strong>
-          </div>
-        </div>
-        <div class="contact-detail">
-          <div class="contact-detail-icon">
-            <svg width="16" height="16" fill="none" stroke="#4A90E2" stroke-width="2" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="2" y1="12" x2="22" y2="12"/>
-              <path d="M12 2a15 15 0 010 20M12 2a15 15 0 000 20"/>
-            </svg>
-          </div>
-          <div class="contact-detail-text">
-            <span>Website</span>
-            <strong>geomatikai.com</strong>
-          </div>
-        </div>
-        <div class="contact-detail">
-          <div class="contact-detail-icon">
-            <svg width="16" height="16" fill="none" stroke="#4A90E2" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-              <circle cx="12" cy="9" r="2.5"/>
-            </svg>
-          </div>
-          <div class="contact-detail-text">
-            <span>Headquarters</span>
-            <strong>Available for global engagements</strong>
-          </div>
-        </div>
-      </div>
-
-      <form class="contact-form" onsubmit="handleSubmit(event)">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="fname">First Name</label>
-            <input type="text" id="fname" placeholder="Jane">
-          </div>
-          <div class="form-group">
-            <label for="lname">Last Name</label>
-            <input type="text" id="lname" placeholder="Smith">
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="email">Email Address</label>
-          <input type="email" id="email" placeholder="jane@company.com">
-        </div>
-        <div class="form-group">
-          <label for="org">Organisation</label>
-          <input type="text" id="org" placeholder="Your company or agency">
-        </div>
-        <div class="form-group">
-          <label for="service">Service of Interest</label>
-          <select id="service">
-            <option value="">Select a service...</option>
-            <option>Geological Mapping</option>
-            <option>Risk Assessment</option>
-            <option>Infrastructure Design</option>
-            <option>Disaster Management</option>
-            <option>Remote Sensing & GIS</option>
-            <option>Environmental Monitoring</option>
-            <option>General Enquiry</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="msg">Message</label>
-          <textarea id="msg" placeholder="Describe your project or challenge..."></textarea>
-        </div>
-        <button type="submit" class="form-submit" id="submitBtn">Send Message</button>
-      </form>
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-inner">
-    <div class="footer-top">
-      <div class="footer-brand">
-        <svg width="150" height="44" viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg">
-          <path d="M40,130 L90,70 L140,110 L190,50 L240,130" fill="none" stroke="#4A90E2" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
-          <circle cx="90" cy="70" r="3.5" fill="#4A90E2"/>
-          <circle cx="190" cy="50" r="3.5" fill="#6fb3f7"/>
-          <text x="265" y="102" font-family="Playfair Display, serif" font-weight="700" font-size="24" fill="#ffffff">GEOMATIK</text>
-          <text x="265" y="124" font-family="DM Sans, sans-serif" font-weight="300" font-size="13" letter-spacing="5" fill="#4A90E2">AI</text>
-        </svg>
-        <p>Revolutionizing geological and infrastructure solutions through artificial intelligence — making the ground beneath us legible, safe, and sustainable.</p>
-      </div>
-      <div class="footer-col">
-        <h5>Services</h5>
-        <ul>
-          <li><a href="#services">Geological Mapping</a></li>
-          <li><a href="#services">Risk Assessment</a></li>
-          <li><a href="#services">Infrastructure Design</a></li>
-          <li><a href="#services">Disaster Management</a></li>
-          <li><a href="#services">Remote Sensing</a></li>
-          <li><a href="#services">Environmental Monitoring</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h5>Company</h5>
-        <ul>
-          <li><a href="#about">About Us</a></li>
-          <li><a href="#expertise">Our Team</a></li>
-          <li><a href="#industries">Industries</a></li>
-          <li><a href="#process">Our Process</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h5>Contact</h5>
-        <ul>
-          <li><a href="mailto:aigeomatik@gmail.com">aigeomatik@gmail.com</a></li>
-          <li><a href="#contact">Send a Message</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <span>© 2025 Geomatik AI. All rights reserved.</span>
-      <span>Intelligent Geological Solutions</span>
-    </div>
-  </div>
-</footer>
-
-<script>
-  function handleSubmit(e) {
-    e.preventDefault();
-    const btn = document.getElementById('submitBtn');
-    btn.textContent = 'Message Sent ✓';
-    btn.style.background = '#1a6b3a';
-    btn.disabled = true;
-    setTimeout(() => {
-      btn.textContent = 'Send Message';
-      btn.style.background = '';
-      btn.disabled = false;
-    }, 4000);
-  }
-
-  // Smooth scroll nav active state
-  const sections = document.querySelectorAll('section[id], div[id]');
-  const navLinks = document.querySelectorAll('.nav-links a');
-
-  window.addEventListener('scroll', () => {
-    let current = '';
-    sections.forEach(s => {
-      if (window.scrollY >= s.offsetTop - 100) current = s.id;
-    });
-    navLinks.forEach(a => {
-      a.style.color = a.getAttribute('href') === '#' + current ? 'var(--blue-glow)' : '';
-    });
-  });
-</script>
+    </footer>
 </body>
 </html>
